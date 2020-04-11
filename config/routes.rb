@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  get 'counties/index'
+  root to: 'counties#index'
 
-  get 'counties/show'
+  resources :counties
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

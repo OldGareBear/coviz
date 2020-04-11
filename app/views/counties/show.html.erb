@@ -1,2 +1,7 @@
-<h1>Counties#show</h1>
-<p>Find me in app/views/counties/show.html.erb</p>
+<h1><%= @county.name %></h1>
+
+<h3>Total Cases</h3>
+<%= line_chart @cases_by_date %>
+
+<h3>New Cases</h3>
+<%= column_chart @new_cases_by_date %>
