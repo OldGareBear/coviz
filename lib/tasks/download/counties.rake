@@ -2,7 +2,8 @@ require 'open-uri'
 require 'csv'
 
 namespace :download do
-  task counties: :environment do
+  task :counties, [:name] => [:environment] do |t, args|
+    target_county = args[:name] || :all
     url = 'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv'
     filename = 'us-counties.csv'
     download = open(url)
@@ -23,8 +24,10 @@ namespace :download do
       county = counties["#{county}|#{state}|#{fips}"] ||= County.find_or_create_by!(name: county, state: state, fips: fips)
 
       # Create or update the cases
-      caseload = Caseload.where(date: date, county: county).first || Caseload.new(date: date, county: county)
-      caseload.update!(cases: cases, deaths: deaths)
+      if [county.name, :all].include?(target_county)
+        caseload = Caseload.where(date: date, county: county).first || Caseload.new(date: date, county: county)
+        caseload.update!(cases: cases, deaths: deaths)
+      end
     end
   end
 end
