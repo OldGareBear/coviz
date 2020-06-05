@@ -5,6 +5,10 @@ class CountiesController < ApplicationController
 
   def show
     @county = County.find(params[:id])
+
+    if @county.name == 'New York City' # Hack -- only NYC to save $$$
+      FetchCases.call(county: @county)
+    end
     @cases_by_date = @county.caseloads.order('date ASC').pluck(:date, :cases)
 
     @new_cases_by_date = (0...@cases_by_date.size).map do |index|
