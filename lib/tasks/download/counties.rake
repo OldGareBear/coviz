@@ -13,18 +13,18 @@ namespace :download do
     table.each do |row|
 
       date = row['date']
-      county = row['county']
+      county_name = row['county']
       state = row['state']
       fips = row['fips']
       cases = row['cases'].to_i
       deaths = row['cases'].to_i
 
+      if [county_name, :all].include?(target_county)
+        # Find or create the counties
+        county = counties["#{county_name}|#{state}|#{fips}"] ||=
+            County.find_or_create_by!(name: county_name, state: state, fips: fips)
 
-      # Find or create the counties
-      county = counties["#{county}|#{state}|#{fips}"] ||= County.find_or_create_by!(name: county, state: state, fips: fips)
-
-      # Create or update the cases
-      if [county.name, :all].include?(target_county)
+        # Create or update the cases
         caseload = Caseload.where(date: date, county: county).first || Caseload.new(date: date, county: county)
         caseload.update!(cases: cases, deaths: deaths)
       end
